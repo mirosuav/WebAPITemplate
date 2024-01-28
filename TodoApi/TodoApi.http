@@ -5,8 +5,8 @@ POST {{TodoApi_HostAddress}}/todoitems
 Content-Type: application/json
 
 {
-    "name":"Send post",
-    "isComplete": false
+    "name":"Send post 2",
+    "isComplete": true
 }
 
 
