@@ -10,7 +10,7 @@ A template for ASP.NET Core Web API including all known best practices
 - Serilog
 - Application Insights
 
-## Health checks
+## [Health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-8.0)
 
 ## CORS
 - [Anti-Forgery](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-8.0#afwma)

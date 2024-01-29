@@ -37,3 +37,7 @@ DELETE {{TodoApi_HostAddress}}/todoitems/2
 GET {{TodoApi_HostAddress}}/todoitems/complete
 
 ###
+
+GET {{TodoApi_HostAddress}}/health
+
+###
