@@ -5,9 +5,8 @@ A template for ASP.NET Core Web API including all known best practices
  - Https
  - HSTS header
 
-## Logging
-- console
-- Serilog
+## [Logging](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-8.0)
+- Console, Debug, Events
 - Application Insights
 
 ## [Health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-8.0)
@@ -23,8 +22,9 @@ A template for ASP.NET Core Web API including all known best practices
  - JWT Bearer token
  
 ## Error handling
-- Error middleware
+- [Error middleware](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling?view=aspnetcore-8.0)
 - Result type pattern
+  Based on [LanguageExtCore](https://github.com/louthy/language-ext/blob/main/LanguageExt.Core/Common/Result/Result.cs)
 
 ## Tests
 - Endpoints
