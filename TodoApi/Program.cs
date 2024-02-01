@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TodoApi.Authentication;
 using TodoApi.Endpoints;
 using TodoApi.Infrastructure;
 using TodoApi.Middlewares;
@@ -46,7 +47,9 @@ app.MapHealthChecks("/health");
 
 app.MapVersionPrompt("/");
 
-app.MapGroup("/todoitems").MapTodoEndpoints();
+app.MapGroup("/todoitems")
+    .MapTodoEndpoints()
+    .AddEndpointFilter<ApiKeyEndpointFilter>();
 
 app.Run();
 
