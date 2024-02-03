@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using TodoApi.Extensions;
 using TodoApi.Infrastructure;
 using TodoApi.Model;
 
@@ -9,66 +10,51 @@ public static class TodoEndpoints
 {
     public static RouteGroupBuilder MapTodoEndpoints(this RouteGroupBuilder group)
     {
-        group.MapGet("/", GetAllTodos);
-        group.MapGet("/complete", GetCompletedTodos);
-        group.MapGet("/{id}", GetTodo);
-        group.MapPost("/", CreateTodo);
-        group.MapPut("/{id}", UpdateTodo);
-        group.MapDelete("/{id}", DeleteTodo);
+        //Return all todos
+        group.MapGet("/", static async (ITodoService todoService) =>
+        {
+            var res = await todoService.GetAllTodos();
+            return res.IsSuccess ? TypedResults.Ok(res.Value) : res.ToProblemResult();
+        });
+
+        //Return all completed todos
+        group.MapGet("/complete", static async (ITodoService todoService) =>
+        {
+            var res = await todoService.GetCompletedTodos();
+            return res.IsSuccess ? TypedResults.Ok(res.Value) : res.ToProblemResult();
+        });
+
+        //Returs todo by id
+        group.MapGet("/{id}", static async (int id, ITodoService todoService) =>
+        {
+            var res = await todoService.GetTodo(id);
+            return res.IsSuccess ? TypedResults.Ok(res.Value) : res.ToProblemResult();
+        });
+
+        //Create new todo
+        group.MapPost("/", static async (Todo todo, ITodoService todoService) =>
+        {
+            var res = await todoService.CreateTodo(todo);
+            return res.IsSuccess ? TypedResults.Created($"{res.Value!.Id}", res.Value) : res.ToProblemResult();
+        });
+
+        //Updates todo
+        group.MapPut("/{id}", static async (int id, Todo todoUpdate, ITodoService todoService) =>
+        {
+            var res = await todoService.UpdateTodo(id, todoUpdate);
+            return res.IsSuccess ? TypedResults.NoContent() : res.ToProblemResult();
+        });
+
+        //Delete todo
+        group.MapDelete("/{id}", static async (int id, ITodoService todoService) =>
+        {
+            var res = await todoService.DeleteTodo(id);
+            return res.IsSuccess ? TypedResults.NoContent() : res.ToProblemResult();
+        });
 
         return group;
     }
 
-    public static async Task<Ok<List<Todo>>> GetAllTodos(TodoDb db)
-    {
-        return TypedResults.Ok(await db.Todos.ToListAsync());
-    }
-
-    public static async Task<Ok<List<Todo>>> GetCompletedTodos(TodoDb db)
-    {
-        return TypedResults.Ok(await db.Todos.Where(t => t.IsComplete).ToListAsync());
-    }
-
-    public static async Task<IResult> GetTodo(int id, TodoDb db)
-    {
-        return await db.Todos.FindAsync(id) is Todo todo
-            ? TypedResults.Ok(todo)
-            : TypedResults.NotFound();
-    }
-
-    public static async Task<Created<Todo>> CreateTodo(Todo todo, TodoDb database)
-    {
-        database.Add(todo);
-        await database.SaveChangesAsync();
-
-        return TypedResults.Created($"{todo.Id}", todo);
-    }
-
-    public static async Task<IResult> UpdateTodo(int id, Todo todoUpdate, TodoDb db)
-    {
-        var todo = await db.Todos.FindAsync(id);
-        if (todo is null)
-            return TypedResults.NotFound();
-
-        todo.Name = todoUpdate.Name;
-        todo.IsComplete = todoUpdate.IsComplete;
-
-        await db.SaveChangesAsync();
-
-        return TypedResults.NoContent();
-    }
-
-    public static async Task<IResult> DeleteTodo(int id, TodoDb db)
-    {
-        var todo = await db.Todos.FindAsync(id);
-        if (todo is null)
-            return TypedResults.NotFound();
-
-        db.Todos.Remove(todo);
-        await db.SaveChangesAsync();
-
-        return TypedResults.NoContent();
-    }
 }
 
 

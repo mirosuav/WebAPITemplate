@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Authentication;
 using TodoApi.Endpoints;
@@ -12,6 +13,8 @@ builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList")
 builder.Services.AddHealthChecks()
     //.AddCheck<HealthCheckHandler>("ApiHealth")//Optional
     .AddDbContextCheck<TodoDb>();
+
+builder.Services.AddScoped<ITodoService, TodoService>();
 
 //builder.Services.AddAuthentication();
 //builder.Services.AddAuthorization();
@@ -42,8 +45,8 @@ else
 //app.UseCustomMiddleware();
 
 app.MapHealthChecks("/health");
-    //.RequireCors();
-    //.RequireAuthorization();
+//.RequireCors();
+//.RequireAuthorization();
 
 app.MapVersionPrompt("/");
 
