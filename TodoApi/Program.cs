@@ -14,6 +14,8 @@ builder.Services.AddHealthChecks()
     //.AddCheck<HealthCheckHandler>("ApiHealth")//Optional
     .AddDbContextCheck<TodoDb>();
 
+//builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddScoped<ITodoService, TodoService>();
 
 //builder.Services.AddAuthentication();
@@ -33,15 +35,17 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+    app.UseExceptionHandler();
     app.UseHttpsRedirection();
     app.UseHsts();
 }
+
 
 //app.UseCors();
 //app.UseAuthentication();
 //app.UseAuthorization();
 
-//app.UseRequestLocalization();
+app.UseRequestLocalization();
 //app.UseCustomMiddleware();
 
 app.MapHealthChecks("/health");

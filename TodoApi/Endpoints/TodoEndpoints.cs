@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using TodoApi.Extensions;
+﻿using TodoApi.Extensions;
 using TodoApi.Infrastructure;
 using TodoApi.Model;
 

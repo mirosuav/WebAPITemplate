@@ -6,8 +6,8 @@ X-API-KEY: C2BAECE9CE7748F7
 Content-Type: application/json
 
 {
-    "name":"Send post 4",
-    "isComplete": false
+    "name":"Send post 3",
+    "isComplete": true
 }
 
 
