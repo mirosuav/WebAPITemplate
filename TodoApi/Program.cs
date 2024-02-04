@@ -54,11 +54,6 @@ app.MapHealthChecks("/health");
 
 app.MapVersionPrompt("/");
 
-app.Map("/err", () =>
-{
-    throw new Exception("###Fatality###");
-});
-
 app.MapGroup("/todoitems")
     .MapTodoEndpoints()
     .AddEndpointFilter<ApiKeyEndpointFilter>();

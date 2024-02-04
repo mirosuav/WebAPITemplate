@@ -1,58 +1,60 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoApi.Model;
+using TodoApi.Tools;
 
 namespace TodoApi.Infrastructure;
 
 public sealed class TodoService : ITodoService
 {
     private readonly TodoDb db;
-    private readonly ILogger<TodoService> logger;
 
-    public TodoService(TodoDb db, ILogger<TodoService> logger)
+    public TodoService(TodoDb db)
     {
         this.db = db;
-        this.logger = logger;
     }
 
     public async Task<Result<List<Todo>>> GetAllTodos()
     {
-        return await db.Todos.ToListAsync();
+        return await db.Todos.ToListAsync().FreeContext();
     }
 
     public async Task<Result<List<Todo>>> GetCompletedTodos()
     {
-        return await db.Todos.Where(t => t.IsComplete).ToListAsync();
+        return await db.Todos.Where(t => t.IsComplete).ToListAsync().FreeContext();
     }
 
     public async Task<Result<Todo>> GetTodo(int id)
     {
-        return await db.Todos.FindAsync(id) is Todo todo
+        return await db.Todos.FindAsync(id).FreeContext() is Todo todo
             ? todo
-            : ApiError.NotFound("Todo.NotFound", "No Todo item found with given id");
+            : ErrorDetails.NotFound("Todo.NotFound", "No Todo item found with given id");
     }
 
     public async Task<Result<Todo>> CreateTodo(Todo todo)
     {
         if (todo is null)
-            return ApiError.NullValue;
+            return ErrorDetails.NullValue;
 
         if (todo.Name is null or [])
-            return ApiError.Validation("Todo.InvalidName", "Name property is required");
+            return ErrorDetails.Validation("Todo.InvalidName", "Name property is required");
 
-        if (await db.Todos.SingleOrDefaultAsync(x=>x.Name!.Equals(todo.Name)) is not null)
-            return ApiError.Conflict("Todo.NameExists", "Todo with such name already exists");
+        if (await db.Todos.SingleOrDefaultAsync(x => x.Name!.Equals(todo.Name)).FreeContext() is not null)
+            return ErrorDetails.Conflict("Todo.NameExists", "Todo with such name already exists");
+
+        //Reset ID for new entity
+        todo.Id = 0;
 
         db.Add(todo);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync().FreeContext();
 
         return todo;
     }
 
     public async Task<Result<Todo>> UpdateTodo(int id, Todo todoUpdate)
     {
-        var todo = await db.Todos.FindAsync(id);
+        var todo = await db.Todos.FindAsync(id).FreeContext();
         if (todo is null)
-            return ApiError.NotFound("Todo.NotFound", "No Todo item found with given id");
+            return ErrorDetails.NotFound("Todo.NotFound", "No Todo item found with given id");
 
         if (todoUpdate is null)
             return todo;
@@ -61,19 +63,19 @@ public sealed class TodoService : ITodoService
             todo.Name = todoUpdate.Name;
         todo.IsComplete = todoUpdate.IsComplete;
 
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync().FreeContext();
 
         return todo;
     }
 
     public async Task<Result<Todo>> DeleteTodo(int id)
     {
-        var todo = await db.Todos.FindAsync(id);
+        var todo = await db.Todos.FindAsync(id).FreeContext();
         if (todo is null)
-            return ApiError.NotFound("Todo.NotFound", "No Todo item found with given id");
+            return ErrorDetails.NotFound("Todo.NotFound", "No Todo item found with given id");
 
         db.Todos.Remove(todo);
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync().FreeContext();
 
         return Result<Todo>.Empty;
     }

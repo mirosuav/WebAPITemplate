@@ -1,13 +1,16 @@
 ﻿using System.Runtime.CompilerServices;
+using TodoApi.Tools;
 
-namespace TodoApi.Tests.Endpoints;
+namespace TodoApi.Tests.Infrastructure;
 
-public class TodoEndpointsTests : IDisposable
+public class TodoServiceTests : IDisposable
 {
     TodoDb db;
-    public TodoEndpointsTests()
+    TodoService sut;
+    public TodoServiceTests()
     {
         db = CreateDbContext();
+        sut = new TodoService(db);
     }
 
     public void Dispose()
@@ -34,10 +37,10 @@ public class TodoEndpointsTests : IDisposable
     public async Task GetAllTodos_ReturnsEmptyListOfTodos()
     {
         // Act
-        var result = await TodoEndpoints.GetAllTodos(db);
+        var result = await sut.GetAllTodos();
 
         // Assert
-        result.Should().BeOfType<Ok<List<Todo>>>();
+        result.Should().BeOfType<Result<List<Todo>>>();
         result.Value.Should().NotBeNull();
         result.Value.Should().BeEmpty();
     }
@@ -49,10 +52,10 @@ public class TodoEndpointsTests : IDisposable
         var todos = await SeedTodos();
 
         // Act
-        var result = await TodoEndpoints.GetAllTodos(db);
+        var result = await sut.GetAllTodos();
 
         // Assert
-        result.Should().BeOfType<Ok<List<Todo>>>();
+        result.Should().BeOfType<Result<List<Todo>>>();
         result.Value.Should().NotBeNull();
         result.Value.Should().Contain(todos);
     }
@@ -64,10 +67,10 @@ public class TodoEndpointsTests : IDisposable
         var todos = (await SeedTodos()).Where(x => x.IsComplete).ToList();
 
         // Act
-        var result = await TodoEndpoints.GetCompletedTodos(db);
+        var result = await sut.GetCompletedTodos();
 
         // Assert
-        result.Should().BeOfType<Ok<List<Todo>>>();
+        result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
         result.Value.Should().Contain(todos);
 
@@ -80,11 +83,11 @@ public class TodoEndpointsTests : IDisposable
         var todos = await SeedTodos();
 
         // Act
-        var result = await TodoEndpoints.GetTodo(1, db);
+        var result = await sut.GetTodo(1);
 
         // Assert
-        result.Should().BeOfType<Ok<Todo>>();
-        result.As<Ok<Todo>>().Value.Should().BeEquivalentTo(todos[0]);
+        result.IsSuccess.Should().BeTrue();
+        result.As<Result<Todo>>().Value.Should().BeEquivalentTo(todos[0]);
     }
 
     [Fact]
@@ -94,19 +97,51 @@ public class TodoEndpointsTests : IDisposable
         var todos = await SeedTodos();
 
         // Act
-        var result = await TodoEndpoints.GetTodo(6, db);
+        var result = await sut.GetTodo(6);
 
         // Assert
-        result.Should().BeOfType<NotFound>();
+        result.IsSuccess.Should().BeFalse();
+        result.Error.ErrorType.Should().Be(ErrorType.NotFound);
     }
 
     [Fact]
-    public async Task CreateTodo_ThrowsOnInvalid()
+    public async Task CreateTodo_Invalid_ReturnsValidationError()
     {
         // Act
-        await ((Func<Task>)(async () => await TodoEndpoints.CreateTodo(new Todo { }, db)))
-            .Should()
-            .ThrowAsync<Exception>();
+        var result = await sut.CreateTodo(new Todo { });
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.ErrorType.Should().Be(ErrorType.Validation);
+    }
+
+
+    [Fact]
+    public async Task CreateTodo_DuplicateName_ReturnsValidationError()
+    {
+        //Arrenge
+        var todos = await SeedTodos();
+
+        // Act
+        var result = await sut.CreateTodo(new Todo { Name = todos[0].Name });
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.ErrorType.Should().Be(ErrorType.Conflict);
+    }
+
+    [Fact]
+    public async Task CreateTodo_DuplicateId_IgnoresIdAndSucceed()
+    {
+        //Arrenge
+        var todos = await SeedTodos();
+
+        // Act
+        var result = await sut.CreateTodo(new Todo { Id = 1, Name = "Test002" });
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Id.Should().BeGreaterThan(1);
     }
 
     [Fact]
@@ -116,12 +151,11 @@ public class TodoEndpointsTests : IDisposable
         var todo = new Todo { Name = "New Todo", IsComplete = true };
 
         // Act
-        var result = await TodoEndpoints.CreateTodo(todo, db);
+        var result = await sut.CreateTodo(todo);
 
         //Assert
-        result.Should().BeOfType<Created<Todo>>();
-        result.As<Created<Todo>>().Value.Should().Be(todo);
-        result.Location.Should().Be($"{todo.Id}");
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(todo);
     }
 
     [Fact]
@@ -131,10 +165,11 @@ public class TodoEndpointsTests : IDisposable
         var todos = await SeedTodos();
 
         // Act
-        var result = await TodoEndpoints.UpdateTodo(11, new Todo { IsComplete = true }, db);
+        var result = await sut.UpdateTodo(11, new Todo { IsComplete = true });
 
         // Assert
-        result.Should().BeOfType<NotFound>();
+        result.IsSuccess.Should().BeFalse();
+        result.Error.ErrorType.Should().Be(ErrorType.NotFound);
     }
 
     [Fact]
@@ -146,10 +181,10 @@ public class TodoEndpointsTests : IDisposable
         bool wasComplete = todo.IsComplete;
 
         // Actvar
-        var result = await TodoEndpoints.UpdateTodo(todo.Id, new Todo { IsComplete = !wasComplete }, db);
+        var result = await sut.UpdateTodo(todo.Id, new Todo { IsComplete = !wasComplete });
 
         // Assert
-        result.Should().BeOfType<NoContent>();
+        result.IsSuccess.Should().BeTrue();
 
         todo = await db.Todos.FindAsync(todo.Id);
         todo.Should().NotBeNull();
@@ -164,10 +199,11 @@ public class TodoEndpointsTests : IDisposable
         var todos = await SeedTodos();
 
         // Act
-        var result = await TodoEndpoints.DeleteTodo(11, db);
+        var result = await sut.DeleteTodo(11);
 
         // Assert
-        result.Should().BeOfType<NotFound>();
+        result.IsSuccess.Should().BeFalse();
+        result.Error.ErrorType.Should().Be(ErrorType.NotFound);
     }
 
     [Fact]
@@ -178,10 +214,10 @@ public class TodoEndpointsTests : IDisposable
         var idToDelete = todos[3].Id;
 
         // Actvar
-        var result = await TodoEndpoints.DeleteTodo(idToDelete, db);
+        var result = await sut.DeleteTodo(idToDelete);
 
         // Assert
-        result.Should().BeOfType<NoContent>();
+        result.IsSuccess.Should().BeTrue();
 
         (await db.Todos.FindAsync(idToDelete)).Should().BeNull();
     }

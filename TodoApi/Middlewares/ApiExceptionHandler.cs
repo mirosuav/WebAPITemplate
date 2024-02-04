@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using TodoApi.Extensions;
 using TodoApi.Infrastructure;
+using TodoApi.Tools;
 
 namespace TodoApi.Middlewares;
 /// <summary>
@@ -33,7 +34,9 @@ public sealed class ApiExceptionHandler : IExceptionHandler
                 Title = "An unexpected error occurred",
                 Detail = exception.Message,
                 Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-            },            cancellationToken);
+            },
+            cancellationToken)
+            .FreeContext();
 
         return true; //exception handled
     }

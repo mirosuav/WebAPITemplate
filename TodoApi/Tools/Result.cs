@@ -1,31 +1,31 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text.Json;
 
-namespace TodoApi.Infrastructure;
+namespace TodoApi.Tools;
 public readonly record struct Result<T>
 {
     public static readonly Result<T> Empty = new();
 
     public readonly bool IsSuccess;
     public readonly T? Value;
-    public readonly ApiError Error;
+    public readonly ErrorDetails Error;
     public bool IsFaulted => !IsSuccess;
-    
+
     public Result()
     {
         IsSuccess = true;
         Value = default;
-        Error = ApiError.None;
+        Error = ErrorDetails.None;
     }
 
     public Result(T value)
     {
         IsSuccess = true;
         Value = value;
-        Error = ApiError.None;
+        Error = ErrorDetails.None;
     }
 
-    public Result(ApiError error)
+    public Result(ErrorDetails error)
     {
         IsSuccess = false;
         Value = default;
@@ -39,10 +39,10 @@ public readonly record struct Result<T>
 
     public static implicit operator Result<T>(T value) => Success(value);
 
-    public static implicit operator Result<T>(ApiError error) => Failure(error);
+    public static implicit operator Result<T>(ErrorDetails error) => Failure(error);
 
     public static Result<T> Success(T value) => new(value);
-    public static Result<T> Failure(ApiError error) => new(error);
+    public static Result<T> Failure(ErrorDetails error) => new(error);
 
     public string AsJson()
         => IsSuccess
