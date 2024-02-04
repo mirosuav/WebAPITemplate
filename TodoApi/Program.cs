@@ -14,9 +14,10 @@ builder.Services.AddHealthChecks()
     //.AddCheck<HealthCheckHandler>("ApiHealth")//Optional
     .AddDbContextCheck<TodoDb>();
 
-//builder.Services.AddExceptionHandler<ApiExceptionHandler>();
-builder.Services.AddProblemDetails();
 builder.Services.AddScoped<ITodoService, TodoService>();
+
+builder.Services.AddExceptionHandler<ApiExceptionHandler>(); 
+//builder.Services.AddProblemDetails(); 
 
 //builder.Services.AddAuthentication();
 //builder.Services.AddAuthorization();
@@ -35,11 +36,10 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler();
+    app.UseExceptionHandler(_ => { });
     app.UseHttpsRedirection();
     app.UseHsts();
 }
-
 
 //app.UseCors();
 //app.UseAuthentication();
@@ -53,6 +53,11 @@ app.MapHealthChecks("/health");
 //.RequireAuthorization();
 
 app.MapVersionPrompt("/");
+
+app.Map("/err", () =>
+{
+    throw new Exception("###Fatality###");
+});
 
 app.MapGroup("/todoitems")
     .MapTodoEndpoints()

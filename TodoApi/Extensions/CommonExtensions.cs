@@ -13,6 +13,10 @@ public static class CommonExtensions
         return TypedResults.Problem(result.Error.ToProblemDetails());
     }
 
+    /// <summary>
+    /// Create ProblemDetails from this error.
+    /// </summary>
+    /// <see href="https://datatracker.ietf.org/doc/html/rfc7807#section-3.1"/>
     public static ProblemDetails ToProblemDetails(this ApiError error)
         => new()
         {

@@ -16,7 +16,6 @@ public sealed class TodoService : ITodoService
 
     public async Task<Result<List<Todo>>> GetAllTodos()
     {
-       // throw new Exception("Fatal error");
         return await db.Todos.ToListAsync();
     }
 

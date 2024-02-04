@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TodoApi.Extensions;
 using TodoApi.Infrastructure;
 
@@ -25,9 +26,14 @@ public sealed class ApiExceptionHandler : IExceptionHandler
         logger.LogError(exception, "Unexpected exception occured.");
 
         await httpContext.Response.WriteAsJsonAsync(
-            ApiError.ServerError.ToProblemDetails(),
-            typeof(ProblemDetails),
-            cancellationToken);
+            new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.InternalServerError,
+                Type = exception.GetType().Name,
+                Title = "An unexpected error occurred",
+                Detail = exception.Message,
+                Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+            },            cancellationToken);
 
         return true; //exception handled
     }
