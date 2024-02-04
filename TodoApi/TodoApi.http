@@ -1,8 +1,8 @@
 @TodoApi_HostAddress = https://localhost:7170
-
+@ApiKey = X7k0WSauhPDYEwz7
 
 POST {{TodoApi_HostAddress}}/todoitems
-X-API-KEY: C2BAECE9CE7748F7
+X-API-KEY: {{ApiKey}}
 Content-Type: application/json
 
 {
@@ -14,16 +14,16 @@ Content-Type: application/json
 ###
 
 GET {{TodoApi_HostAddress}}/todoitems
-X-API-KEY: C2BAECE9CE7748F7
+X-API-KEY: {{ApiKey}}
 ###
 
 GET {{TodoApi_HostAddress}}/todoitems/2
-X-API-KEY: C2BAECE9CE7748F7
+X-API-KEY: {{ApiKey}}
 
 ###
 
 PUT {{TodoApi_HostAddress}}/todoitems/2
-X-API-KEY: C2BAECE9CE7748F7
+X-API-KEY: {{ApiKey}}
 Content-Type: application/json
 
 {
@@ -34,12 +34,12 @@ Content-Type: application/json
 ###
 
 DELETE {{TodoApi_HostAddress}}/todoitems/2
-X-API-KEY: C2BAECE9CE7748F7
+X-API-KEY: {{ApiKey}}
 
 ###
 
 GET {{TodoApi_HostAddress}}/todoitems/complete
-X-API-KEY: C2BAECE9CE7748F7
+X-API-KEY: {{ApiKey}}
 
 ###
 
