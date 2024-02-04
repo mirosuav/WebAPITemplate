@@ -1,5 +1,5 @@
 # WebAPITemplate
-A template for ASP.NET Core Web API including all known best practices
+A template project for ASP.NET Core Web API including all known best practices
 
 ## Minimal API
  - Https
@@ -22,11 +22,11 @@ A template for ASP.NET Core Web API including all known best practices
  - JWT Bearer token
  
 ## Error handling
+- [IExceptionHandler](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling?view=aspnetcore-8.0#iexceptionhandler)
 - [Error middleware](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling?view=aspnetcore-8.0)
 - Result type pattern
   Based on [LanguageExtCore](https://github.com/louthy/language-ext/blob/main/LanguageExt.Core/Common/Result/Result.cs)
 
 ## Tests
-- Endpoints
 - [Stress testing](https://learn.microsoft.com/en-us/aspnet/core/test/load-tests?view=aspnetcore-8.0)
 - Integration testing on docker
