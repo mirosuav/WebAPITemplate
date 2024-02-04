@@ -1,9 +1,7 @@
 ﻿using TodoApi.Extensions;
-using TodoApi.Infrastructure;
-using TodoApi.Model;
 using TodoApi.Tools;
 
-namespace TodoApi.Endpoints;
+namespace TodoApi.Todos;
 
 public static class TodoEndpoints
 {

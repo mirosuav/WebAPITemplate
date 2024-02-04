@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace TodoApi.Model;
+namespace TodoApi.Todos;
 
 [Index(nameof(Name), IsUnique = true)]
 public class Todo

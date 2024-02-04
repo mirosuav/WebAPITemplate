@@ -1,4 +1,4 @@
-@TodoApi_HostAddress = https://localhost:7170
+﻿@TodoApi_HostAddress = https://localhost:7170
 @ApiKey = X7k0WSauhPDYEwz7
 
 POST {{TodoApi_HostAddress}}/todoitems
@@ -47,6 +47,6 @@ GET {{TodoApi_HostAddress}}/health
 
 ###
 
-GET {{TodoApi_HostAddress}}/err
+GET {{TodoApi_HostAddress}}/weather/Poznani
 
 ###

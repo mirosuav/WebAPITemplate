@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Authentication;
-using TodoApi.Endpoints;
-using TodoApi.Infrastructure;
+using TodoApi.Extensions;
 using TodoApi.Middlewares;
+using TodoApi.Todos;
+using TodoApi.WeatherApi;
 
 //https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/middleware?view=aspnetcore-8.0
 var builder = WebApplication.CreateBuilder(args);
@@ -14,9 +14,11 @@ builder.Services.AddHealthChecks()
     //.AddCheck<HealthCheckHandler>("ApiHealth")//Optional
     .AddDbContextCheck<TodoDb>();
 
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<ITodoService, TodoService>();
+builder.Services.AddScoped<WeatherApiService>();
 
-builder.Services.AddExceptionHandler<ApiExceptionHandler>(); 
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 //builder.Services.AddProblemDetails(); 
 
 //builder.Services.AddAuthentication();
@@ -57,6 +59,9 @@ app.MapVersionPrompt("/");
 app.MapGroup("/todoitems")
     .MapTodoEndpoints()
     .AddEndpointFilter<ApiKeyEndpointFilter>();
+
+app.MapGroup("/weather")
+    .MapWeatherEndpoints();
 
 app.Run();
 

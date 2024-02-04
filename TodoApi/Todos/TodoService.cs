@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TodoApi.Model;
 using TodoApi.Tools;
 
-namespace TodoApi.Infrastructure;
+namespace TodoApi.Todos;
 
 public sealed class TodoService : ITodoService
 {
@@ -27,19 +26,19 @@ public sealed class TodoService : ITodoService
     {
         return await db.Todos.FindAsync(id).FreeContext() is Todo todo
             ? todo
-            : ErrorDetails.NotFound("Todo.NotFound", "No Todo item found with given id");
+            : Error.NotFound("Todo.NotFound", "No Todo item found with given id");
     }
 
     public async Task<Result<Todo>> CreateTodo(Todo todo)
     {
         if (todo is null)
-            return ErrorDetails.NullValue;
+            return Error.NullValue;
 
         if (todo.Name is null or [])
-            return ErrorDetails.Validation("Todo.InvalidName", "Name property is required");
+            return Error.Validation("Todo.InvalidName", "Name property is required");
 
         if (await db.Todos.SingleOrDefaultAsync(x => x.Name!.Equals(todo.Name)).FreeContext() is not null)
-            return ErrorDetails.Conflict("Todo.NameExists", "Todo with such name already exists");
+            return Error.Conflict("Todo.NameExists", "Todo with such name already exists");
 
         //Reset ID for new entity
         todo.Id = 0;
@@ -54,7 +53,7 @@ public sealed class TodoService : ITodoService
     {
         var todo = await db.Todos.FindAsync(id).FreeContext();
         if (todo is null)
-            return ErrorDetails.NotFound("Todo.NotFound", "No Todo item found with given id");
+            return Error.NotFound("Todo.NotFound", "No Todo item found with given id");
 
         if (todoUpdate is null)
             return todo;
@@ -72,7 +71,7 @@ public sealed class TodoService : ITodoService
     {
         var todo = await db.Todos.FindAsync(id).FreeContext();
         if (todo is null)
-            return ErrorDetails.NotFound("Todo.NotFound", "No Todo item found with given id");
+            return Error.NotFound("Todo.NotFound", "No Todo item found with given id");
 
         db.Todos.Remove(todo);
         await db.SaveChangesAsync().FreeContext();

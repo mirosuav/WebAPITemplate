@@ -31,7 +31,7 @@ public static class CommonExtensions
     /// Create ProblemDetails from this error.
     /// </summary>
     /// <see href="https://datatracker.ietf.org/doc/html/rfc7807#section-3.1"/>
-    public static ProblemDetails ToProblemDetails(this ErrorDetails error)
+    public static ProblemDetails ToProblemDetails(this Error error)
         => new()
         {
             Title = error.ErrorType.ToString(),

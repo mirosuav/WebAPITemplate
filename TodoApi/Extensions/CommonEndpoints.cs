@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 
-namespace TodoApi.Endpoints;
+namespace TodoApi.Extensions;
 
 public static class CommonEndpoints
 {

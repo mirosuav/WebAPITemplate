@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using TodoApi.Extensions;
-using TodoApi.Infrastructure;
 using TodoApi.Tools;
 
 namespace TodoApi.Middlewares;
