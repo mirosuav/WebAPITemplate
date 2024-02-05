@@ -12,6 +12,7 @@ public sealed class WeatherApiService
     private readonly IConfiguration configuration;
     private readonly HttpClient _http;
     private readonly ILogger<WeatherApiService> _logger;
+    private readonly string apiKey;
     private static readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public WeatherApiService(
@@ -23,23 +24,20 @@ public sealed class WeatherApiService
         _http = http;
         _logger = logger;
 
+        apiKey = configuration.GetValue(API_KEY_NAME, string.Empty)!;
+
+        if (apiKey is [])
+            throw new ApplicationException("Invalid configuration: no WEATHER_API_KEY environment variable defined!");
     }
 
     public async Task<Result<LocationWeather>> GetCurrentWeather(string location, CancellationToken token = default)
     {
         try
         {
-            var key = configuration.GetValue<string>(API_KEY_NAME);
-            if (key is null or [])
-            {
-                _logger.LogError("Invalid configuration: no WEATHER_API_KEY environment variable defined!");
-                return Error.ServerError;
-            }
-
             if (location is null or [])
                 return Error.NullValue;
 
-            var qs = QueryString.Create("key", key);
+            var qs = QueryString.Create("key", apiKey);
             qs = qs.Add("aqi", "no"); //no air quality data
             qs = qs.Add("q", location);
 

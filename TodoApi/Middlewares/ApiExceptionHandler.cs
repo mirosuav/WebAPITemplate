@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using TodoApi.Extensions;
 using TodoApi.Tools;
 
 namespace TodoApi.Middlewares;
@@ -22,18 +24,11 @@ public sealed class ApiExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "Unexpected exception occured.");
+        logger.LogError(exception, "{Exception} exception occured.", typeof(Exception));
 
         await httpContext.Response.WriteAsJsonAsync(
-            new ProblemDetails
-            {
-                Status = (int)HttpStatusCode.InternalServerError,
-                Type = exception.GetType().Name,
-                Title = "An unexpected error occurred",
-                Detail = exception.Message,
-                Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-            },
-            cancellationToken)
+            Error.CreateFromException(exception)
+            .ToProblemDetails($"{httpContext.Request.Method} {httpContext.Request.Path}"))
             .FreeContext();
 
         return true; //exception handled

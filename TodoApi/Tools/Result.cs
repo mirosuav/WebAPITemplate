@@ -2,8 +2,16 @@
 using System.Text.Json;
 
 namespace TodoApi.Tools;
+
+/// <summary>
+/// Optional Result of type T. Is either sucessfull 'Value' object of type T or 'Error'
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public readonly record struct Result<T>
 {
+    /// <summary>
+    /// No result value and no Error either
+    /// </summary>
     public static readonly Result<T> Empty = new();
 
     public readonly bool IsSuccess;

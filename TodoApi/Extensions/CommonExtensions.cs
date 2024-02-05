@@ -31,8 +31,9 @@ public static class CommonExtensions
     /// Create ProblemDetails from this error.
     /// </summary>
     /// <see href="https://datatracker.ietf.org/doc/html/rfc7807#section-3.1"/>
-    public static ProblemDetails ToProblemDetails(this Error error)
-        => new()
+    public static ProblemDetails ToProblemDetails(this Error error, string? instance = null)
+    {
+        var pd = new ProblemDetails
         {
             Title = error.ErrorType.ToString(),
             Detail = error.Description,
@@ -43,6 +44,12 @@ public static class CommonExtensions
                 {"errors", new[] { error } }
             }
         };
+
+        if (instance is not null)
+            pd.Instance = instance;
+
+        return pd;
+    }
 
     public static int ToStatusCode(this ErrorType errorType)
         => errorType switch

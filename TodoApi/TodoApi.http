@@ -6,8 +6,8 @@ X-API-KEY: {{ApiKey}}
 Content-Type: application/json
 
 {
-    "name":"Send post 5",
-    "isComplete": true
+    "name":"Send post 3",
+    "isComplete": false
 }
 
 
@@ -17,23 +17,23 @@ GET {{TodoApi_HostAddress}}/todoitems
 X-API-KEY: {{ApiKey}}
 ###
 
-GET {{TodoApi_HostAddress}}/todoitems/2
+GET {{TodoApi_HostAddress}}/todoitems/1
 X-API-KEY: {{ApiKey}}
 
 ###
 
-PUT {{TodoApi_HostAddress}}/todoitems/2
+PUT {{TodoApi_HostAddress}}/todoitems/1
 X-API-KEY: {{ApiKey}}
 Content-Type: application/json
 
 {
-    "name":"Send post",
-    "isComplete": true
+    "name":"Test post",
+    "isComplete": false
 }
 
 ###
 
-DELETE {{TodoApi_HostAddress}}/todoitems/2
+DELETE {{TodoApi_HostAddress}}/todoitems/11
 X-API-KEY: {{ApiKey}}
 
 ###
@@ -47,6 +47,6 @@ GET {{TodoApi_HostAddress}}/health
 
 ###
 
-GET {{TodoApi_HostAddress}}/weather/Poznani
+GET {{TodoApi_HostAddress}}/weather/Sydneys
 
 ###
