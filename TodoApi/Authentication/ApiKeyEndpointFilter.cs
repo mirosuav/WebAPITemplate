@@ -3,6 +3,9 @@ namespace TodoApi.Authentication;
 
 public class ApiKeyEndpointFilter : IEndpointFilter
 {
+    public const string ApiKeyHeaderName = "X-API-KEY";
+    public const string ApiKeyEnvName = "API_KEY";
+
     private readonly IConfiguration _configuration;
     private readonly ILogger<ApiKeyEndpointFilter> logger;
 
@@ -17,15 +20,15 @@ public class ApiKeyEndpointFilter : IEndpointFilter
         EndpointFilterDelegate next)
     {
         if (!context.HttpContext.Request.Headers
-            .TryGetValue(AuthenticationConst.ApiKeyHeaderName, out var requestApiKey))
+            .TryGetValue(ApiKeyHeaderName, out var requestApiKey))
         {
             return TypedResults.Unauthorized();
         }
         
-        var _apiKey = _configuration.GetValue<string>("API_KEY");
+        var _apiKey = _configuration.GetValue<string>(ApiKeyEnvName);
         if (_apiKey is null or [])
         {
-            logger.LogError("Invalid configuration: no API_KEY environment variable defined!");
+            logger.LogError("Invalid configuration: no {API_KEY} environment variable defined!", ApiKeyEnvName);
             throw new ApplicationException("Invalid application configuration");            
         }
 

@@ -5,6 +5,7 @@ namespace TodoApi.WeatherApi;
 
 public record WeatherApiError(WeatherApiErrorDetails Error)
     : Error(Error.Code.ToString(), Error.Message, ErrorType.Validation);
+
 public record WeatherApiErrorDetails(int Code, string Message);
 
 public record LocationWeather

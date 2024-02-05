@@ -18,14 +18,6 @@ public record Error(string Code, string Description, ErrorType ErrorType)
     public static Error Validation(string code, string description) => new(code, description, ErrorType.Validation);
     public static Error NotFound(string code, string description) => new(code, description, ErrorType.NotFound);
     public static Error Conflict(string code, string description) => new(code, description, ErrorType.Conflict);
-
-    public static Error CreateFromException(Exception ex)
-    {
-        if (ex is OperationCanceledException)
-            return OperationCancelled;
-
-        return Failure("Error.Server", ex.Message);
-    }
 }
 
 public enum ErrorType

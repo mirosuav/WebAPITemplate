@@ -24,12 +24,22 @@ public sealed class ApiExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "{Exception} exception occured.", typeof(Exception));
+        ProblemDetails details;
 
-        await httpContext.Response.WriteAsJsonAsync(
-            Error.CreateFromException(exception)
-            .ToProblemDetails($"{httpContext.Request.Method} {httpContext.Request.Path}"))
-            .FreeContext();
+        if (exception is OperationCanceledException)
+        {
+            details = Error.OperationCancelled.ToProblemDetails();
+            logger.LogInformation("Operation cancelled");
+        }
+        else
+        {
+            details = Error.Failure("Error.Server", exception.Message)
+                .ToProblemDetails($"{httpContext.Request.Method} {httpContext.Request.Path}");
+
+            logger.LogError(exception, "{Exception} exception occured.", typeof(Exception));
+        }
+
+        await httpContext.Response.WriteAsJsonAsync(details).FreeContext();
 
         return true; //exception handled
     }

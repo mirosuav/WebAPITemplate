@@ -32,35 +32,27 @@ public sealed class WeatherApiService
 
     public async Task<Result<LocationWeather>> GetCurrentWeather(string location, CancellationToken token = default)
     {
-        try
+        if (location is null or [])
+            return Error.NullValue;
+
+
+        var qs = QueryString.Create(new KeyValuePair<string, string?>[]
         {
-            if (location is null or [])
-                return Error.NullValue;
+            new( "key", apiKey),
+            new( "aqi", "no"),
+            new( "q", location)
+        });
 
-            var qs = QueryString.Create("key", apiKey);
-            qs = qs.Add("aqi", "no"); //no air quality data
-            qs = qs.Add("q", location);
+        var result = await _http.GetAsync(CurrentWeatherUrl + qs.ToUriComponent()).FreeContext();
 
-            var result = await _http.GetAsync(CurrentWeatherUrl + qs.ToUriComponent()).FreeContext();
-
-            if (!result.IsSuccessStatusCode)
-            {
-                return await result.Content.ReadFromJsonAsync<WeatherApiError>(jsonOptions, token).FreeContext()
-                             ?? throw new ApplicationException("Invalid WeatherAPI response");
-            }
-
-            return await result.Content.ReadFromJsonAsync<LocationWeather>(token)
-                   ?? throw new ApplicationException("Invalid WeatherAPI response");
-        }
-        catch (OperationCanceledException)
+        if (!result.IsSuccessStatusCode)
         {
-            return Error.OperationCancelled;
+            return await result.Content.ReadFromJsonAsync<WeatherApiError>(jsonOptions, token).FreeContext()
+                         ?? throw new ApplicationException("Invalid WeatherAPI response");
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Unexpected error occured");
-            return Error.Failure("WeatherApi.Error", ex.Message);
-        }
+
+        return await result.Content.ReadFromJsonAsync<LocationWeather>(token)
+               ?? throw new ApplicationException("Invalid WeatherAPI response");
     }
 
 }

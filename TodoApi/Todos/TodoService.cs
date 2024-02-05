@@ -5,6 +5,10 @@ namespace TodoApi.Todos;
 
 public sealed class TodoService : ITodoService
 {
+    private static Error TodoNotFoundError = Error.NotFound("Todo.NotFound", "No Todo item found with given id");
+    private static Error TodoInvalidNameError = Error.Validation("Todo.InvalidName", "Name property is required");
+    private static Error TodoNameExistsError = Error.Conflict("Todo.NameExists", "Todo with such name already exists");
+
     private readonly TodoDb db;
 
     public TodoService(TodoDb db)
@@ -26,7 +30,7 @@ public sealed class TodoService : ITodoService
     {
         return await db.Todos.FindAsync(id).FreeContext() is Todo todo
             ? todo
-            : Error.NotFound("Todo.NotFound", "No Todo item found with given id");
+            : TodoNotFoundError;
     }
 
     public async Task<Result<Todo>> CreateTodo(Todo todo)
@@ -35,10 +39,10 @@ public sealed class TodoService : ITodoService
             return Error.NullValue;
 
         if (todo.Name is null or [])
-            return Error.Validation("Todo.InvalidName", "Name property is required");
+            return TodoInvalidNameError;
 
         if (await db.Todos.SingleOrDefaultAsync(x => x.Name!.Equals(todo.Name)).FreeContext() is not null)
-            return Error.Conflict("Todo.NameExists", "Todo with such name already exists");
+            return TodoNameExistsError;
 
         //Reset ID for new entity
         todo.Id = 0;
@@ -53,7 +57,7 @@ public sealed class TodoService : ITodoService
     {
         var todo = await db.Todos.FindAsync(id).FreeContext();
         if (todo is null)
-            return Error.NotFound("Todo.NotFound", "No Todo item found with given id");
+            return TodoNotFoundError;
 
         if (todoUpdate is null)
             return todo;
@@ -71,7 +75,7 @@ public sealed class TodoService : ITodoService
     {
         var todo = await db.Todos.FindAsync(id).FreeContext();
         if (todo is null)
-            return Error.NotFound("Todo.NotFound", "No Todo item found with given id");
+            return TodoNotFoundError;
 
         db.Todos.Remove(todo);
         await db.SaveChangesAsync().FreeContext();

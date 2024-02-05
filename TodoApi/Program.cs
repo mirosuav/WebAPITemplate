@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Polly.Extensions.Http;
+using Polly;
 using TodoApi.Authentication;
 using TodoApi.Extensions;
 using TodoApi.Middlewares;
 using TodoApi.Todos;
 using TodoApi.WeatherApi;
 
-//https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/middleware?view=aspnetcore-8.0
 var builder = WebApplication.CreateBuilder(args);
 
 //builder.Services.AddEndpointsApiExplorer(); //Optional
@@ -14,12 +15,12 @@ builder.Services.AddHealthChecks()
     //.AddCheck<HealthCheckHandler>("ApiHealth")//Optional
     .AddDbContextCheck<TodoDb>();
 
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<WeatherApiService>()
+        .AddPolicyHandler(GetHttpClientRetryPolicy());
+
 builder.Services.AddScoped<ITodoService, TodoService>();
-builder.Services.AddScoped<WeatherApiService>();
 
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
-//builder.Services.AddProblemDetails(); 
 
 //builder.Services.AddAuthentication();
 //builder.Services.AddAuthorization();
@@ -47,7 +48,7 @@ else
 //app.UseAuthentication();
 //app.UseAuthorization();
 
-app.UseRequestLocalization();
+//app.UseRequestLocalization();
 //app.UseCustomMiddleware();
 
 app.MapHealthChecks("/health");
@@ -65,3 +66,11 @@ app.MapGroup("/weather")
 
 app.Run();
 
+
+//Configure resiliency policy for http calls
+static IAsyncPolicy<HttpResponseMessage> GetHttpClientRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .WaitAndRetryAsync(4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}
