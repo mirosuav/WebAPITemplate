@@ -6,7 +6,7 @@ X-API-KEY: {{ApiKey}}
 Content-Type: application/json
 
 {
-    "name":"Send post 3",
+    "name":"Send post 2",
     "isComplete": false
 }
 
@@ -47,6 +47,6 @@ GET {{TodoApi_HostAddress}}/health
 
 ###
 
-GET {{TodoApi_HostAddress}}/weather/Warsaw
+GET {{TodoApi_HostAddress}}/weather/Poznan
 
 ###

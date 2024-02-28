@@ -7,7 +7,7 @@ namespace TodoApi.Tools;
 /// Optional Result of type T. Is either sucessfull 'Value' object of type T or 'Error'
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public readonly record struct Result<T>
+public readonly record struct Result<T> : IResult
 {
     /// <summary>
     /// No result value and no Error either

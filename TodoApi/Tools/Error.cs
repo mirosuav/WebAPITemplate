@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Diagnostics.Tracing;
-using System.Net;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿namespace TodoApi.Tools;
 
-namespace TodoApi.Tools;
-
+/// <summary>
+/// Operation Error
+/// </summary>
+/// <param name="Code">Short error code</param>
+/// <param name="Description">Error human readable description</param>
+/// <param name="ErrorType">Error type</param>
 public record Error(string Code, string Description, ErrorType ErrorType)
 {
     public static readonly Error None = Failure(string.Empty, string.Empty);

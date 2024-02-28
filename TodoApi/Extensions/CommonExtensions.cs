@@ -5,21 +5,21 @@ namespace TodoApi.Extensions;
 
 public static class CommonExtensions
 {
-    public static IResult ToHttpOkResult<T>(this Result<T> result)
+    public static Microsoft.AspNetCore.Http.IResult ToHttpOkResult<T>(this Result<T> result)
         => result.IsSuccess
             ? TypedResults.Ok(result.Value)
             : result.ToProblemResult();
 
-    public static IResult ToHttpNoContentResult<T>(this Result<T> result)
+    public static Microsoft.AspNetCore.Http.IResult ToHttpNoContentResult<T>(this Result<T> result)
         => result.IsSuccess
             ? TypedResults.NoContent()
             : result.ToProblemResult();
-    public static IResult ToHttpResult<T>(this Result<T> result, Func<Result<T>, IResult> resultFactory)
+    public static Microsoft.AspNetCore.Http.IResult ToHttpResult<T>(this Result<T> result, Func<Result<T>, Microsoft.AspNetCore.Http.IResult> resultFactory)
         => result.IsSuccess
         ? resultFactory(result)
         : result.ToProblemResult();
 
-    public static IResult ToProblemResult<T>(this Result<T> result)
+    public static Microsoft.AspNetCore.Http.IResult ToProblemResult<T>(this Result<T> result)
     {
         if (result.IsSuccess)
             throw new ApplicationException("No Error to detils to crete.");

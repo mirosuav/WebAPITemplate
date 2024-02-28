@@ -7,8 +7,10 @@ A template project for ASP.NET Core Web API including all known best practices
 
 ## [Logging](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-8.0)
 - Console, Debug, Events
+-[Diagnostics-eventflow](https://github.com/Azure/diagnostics-eventflow) collects event streams from multiple sources and publishes it to output systems.
 
 ## [Health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-8.0)
+[AspNetCore.Diagnostics.HealthChecks](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks)
 
 ## CORS
 - [Anti-Forgery](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-8.0#afwma)
