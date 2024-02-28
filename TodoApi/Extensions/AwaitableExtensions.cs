@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace TodoApi.Tools;
+namespace TodoApi.Extensions;
 public static class AwaitableExtensions
 {
     public static ConfiguredTaskAwaitable KeepContext(this Task t) => t.ConfigureAwait(true);

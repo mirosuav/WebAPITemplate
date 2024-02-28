@@ -1,5 +1,4 @@
 ﻿using TodoApi.Extensions;
-using TodoApi.Tools;
 
 namespace TodoApi.Todos;
 
@@ -10,42 +9,42 @@ public static class TodoEndpoints
         //Return all todos
         group.MapGet("/", static async (ITodoService todoService) =>
         {
-            var res = await todoService.GetAllTodos().FreeContext();
+            var res = await todoService.GetAllTodos();
             return res.ToHttpOkResult();
         });
 
         //Return all completed todos
         group.MapGet("/complete", static async (ITodoService todoService) =>
         {
-            var res = await todoService.GetCompletedTodos().FreeContext();
+            var res = await todoService.GetCompletedTodos();
             return res.ToHttpOkResult();
         });
 
         //Returs todo by id
         group.MapGet("/{id}", static async (int id, ITodoService todoService) =>
         {
-            var res = await todoService.GetTodo(id).FreeContext();
+            var res = await todoService.GetTodo(id);
             return res.ToHttpOkResult();
         });
 
         //Create new todo
         group.MapPost("/", static async (Todo todo, ITodoService todoService) =>
         {
-            var res = await todoService.CreateTodo(todo).FreeContext();
+            var res = await todoService.CreateTodo(todo);
             return res.ToHttpResult(r => TypedResults.Created($"{r.Value!.Id}", r.Value));
         });
 
         //Updates todo
         group.MapPut("/{id}", static async (int id, Todo todoUpdate, ITodoService todoService) =>
         {
-            var res = await todoService.UpdateTodo(id, todoUpdate).FreeContext();
+            var res = await todoService.UpdateTodo(id, todoUpdate);
             return res.ToHttpNoContentResult();
         });
 
         //Delete todo
         group.MapDelete("/{id}", static async (int id, ITodoService todoService) =>
         {
-            var res = await todoService.DeleteTodo(id).FreeContext();
+            var res = await todoService.DeleteTodo(id);
             return res.ToHttpNoContentResult();
         });
 

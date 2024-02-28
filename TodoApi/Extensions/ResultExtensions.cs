@@ -3,7 +3,7 @@ using TodoApi.Tools;
 
 namespace TodoApi.Extensions;
 
-public static class CommonExtensions
+public static class ResultExtensions
 {
     public static Microsoft.AspNetCore.Http.IResult ToHttpOkResult<T>(this Result<T> result)
         => result.IsSuccess
@@ -22,7 +22,7 @@ public static class CommonExtensions
     public static Microsoft.AspNetCore.Http.IResult ToProblemResult<T>(this Result<T> result)
     {
         if (result.IsSuccess)
-            throw new ApplicationException("No Error to detils to crete.");
+            throw new ApplicationException("Ups!, this Result is not an Error.");
 
         return TypedResults.Problem(result.Error.ToProblemDetails());
     }
