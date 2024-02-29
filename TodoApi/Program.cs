@@ -15,6 +15,8 @@ builder.Services.AddHealthChecks().AddDbContextCheck<TodoDb>();
 
 builder.Services.AddScoped<ITodoService, TodoService>();
 
+builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 
 builder.Services.AddApiVersioning(opt =>
@@ -27,7 +29,6 @@ builder.Services.AddApiVersioning(opt =>
 
 if (builder.Environment.IsDevelopment())
 {
-    builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGenWithAPI_KEY();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 }
