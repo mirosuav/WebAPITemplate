@@ -4,7 +4,7 @@ using TodoApi.Tools;
 
 namespace TodoApi.Todos;
 
-public sealed class TodoService : ITodoService
+public sealed class TodoService : ITodoService //TODO Is it clean ?
 {
     private static Error TodoNotFoundError = Error.NotFound("Todo.NotFound", "No Todo item found with given id");
     private static Error TodoInvalidNameError = Error.Validation("Todo.InvalidName", "Name property is required");
@@ -44,6 +44,12 @@ public sealed class TodoService : ITodoService
 
         if (await db.Todos.SingleOrDefaultAsync(x => x.Name!.Equals(todo.Name)).FreeContext() is not null)
             return TodoNameExistsError;
+
+        //TODO Nasty error
+        if (todo.Name.Contains("joke", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ApplicationException("Joke? Are you serious?");
+        }
 
         //Reset ID for new entity
         todo.Id = 0;

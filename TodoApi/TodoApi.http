@@ -1,12 +1,13 @@
-﻿@TodoApi_HostAddress = https://localhost:7170
-@ApiKey = X7k0WSauhPDYEwz7
+﻿# @TodoApi_HostAddress = https://localhost:7170
+@TodoApi_HostAddress = https://localhost:57469
+@ApiKey = TodoAPI_Super_Secret_Key
 
 POST {{TodoApi_HostAddress}}/todoitems
 X-API-KEY: {{ApiKey}}
 Content-Type: application/json
 
 {
-    "name":"Send post 2",
+    "name":"Prepare a good code sample",
     "isComplete": false
 }
 
@@ -28,7 +29,7 @@ Content-Type: application/json
 
 {
     "name":"Test post",
-    "isComplete": false
+    "isComplete": true
 }
 
 ###
@@ -47,6 +48,3 @@ GET {{TodoApi_HostAddress}}/health
 
 ###
 
-GET {{TodoApi_HostAddress}}/weather/Poznan
-
-###

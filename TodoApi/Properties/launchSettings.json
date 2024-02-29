@@ -23,7 +23,8 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "API_KEY": "TodoAPI_Super_Secret_Key"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7170;http://localhost:5162"

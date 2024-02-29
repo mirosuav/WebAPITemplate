@@ -10,6 +10,7 @@ services:
       - sqlserver
 
   sqlserver:
+    container_name: SqlServer2022
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       - ACCEPT_EULA=Y

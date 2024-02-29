@@ -34,6 +34,8 @@ public static class TodoEndpoints
             return res.ToHttpResult(r => TypedResults.Created($"{r.Value!.Id}", r.Value));
         });
 
+        //TODO Where is PATCH ?
+
         //Updates todo
         group.MapPut("/{id}", static async (int id, Todo todoUpdate, ITodoService todoService) =>
         {
