@@ -1,5 +1,5 @@
-﻿# @TodoApi_HostAddress = https://localhost:7170
-@TodoApi_HostAddress = https://localhost:57469
+﻿@TodoApi_HostAddress = https://localhost:7170
+# @TodoApi_HostAddress = https://localhost:57469
 @ApiKey = TodoAPI_Super_Secret_Key
 
 POST {{TodoApi_HostAddress}}/todoitems
@@ -7,7 +7,7 @@ X-API-KEY: {{ApiKey}}
 Content-Type: application/json
 
 {
-    "name":"Prepare a good code sample",
+    "name":"Prepare some joke",
     "isComplete": false
 }
 

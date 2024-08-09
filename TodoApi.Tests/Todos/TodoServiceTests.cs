@@ -1,5 +1,6 @@
 ﻿using TodoApi.Todos;
 using TodoApi.Tools;
+using Xunit.Abstractions;
 
 namespace TodoApi.Tests.Infrastructure;
 
@@ -7,10 +8,13 @@ public class TodoServiceTests : IDisposable
 {
     TodoDb db;
     TodoService sut;
-    public TodoServiceTests()
+    private readonly ITestOutputHelper outputHelper;
+
+    public TodoServiceTests(ITestOutputHelper outputHelper)
     {
         db = CreateDbContext();
         sut = new TodoService(db);
+        this.outputHelper = outputHelper;
     }
 
     public void Dispose()
@@ -21,6 +25,8 @@ public class TodoServiceTests : IDisposable
 
     async Task<List<Todo>> SeedTodos()
     {
+        outputHelper.WriteLine("Seeding data.");
+
         var todos = new List<Todo> {
         new Todo { Name = "Test Todo 1", IsComplete = false },
         new Todo { Name = "Test Todo 2", IsComplete = true },
